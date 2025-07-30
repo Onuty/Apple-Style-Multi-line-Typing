@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Style Multi-line Typing</title>
+<style>
+  body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+    background: #f5f5f7; /* Apple淡灰背景 */
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    position: relative; /* 新增 */
+  }
+
+  /* Apple Logo */
+  .apple-logo {
+    width: 80px;
+    height: auto;
+    position: absolute;
+    top: 100px; /* 往下移動 */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    fill: #000;
+    opacity: 1;
+  }
+
+  /* Container for multi-line typing */
+  .text-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    text-align: center;
+    /* 移除 padding-top */
+    /* 新增以下兩行讓內容不超出螢幕 */
+    max-width: 95vw;
+    box-sizing: border-box;
+  }
+
+  /* Rainbow text for each line */
+  .rainbow-line {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(
+      270deg,
+      #ff3b30,
+      #ff9500,
+      #ffcc00,
+      #34c759,
+      #30b0ff,
+      #5856d6,
+      #af52de,
+      #ff2d55
+    );
+    background-size: 800% 800%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow 8s ease infinite;
+    overflow: hidden;
+    margin: 8px 0;
+    /* 新增以下兩行讓字體在手機上自動縮小 */
+    word-break: break-word;
+    font-size: clamp(1.5rem, 6vw, 3rem);
+    /* 移除 position, left, transform, top */
+  }
+
+  @keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+</style>
+</head>
+<body>
+  <!-- Apple Logo (SVG) -->
+  <img src="Apple_logo_black.svg" class="apple-logo" alt="Apple Logo">
+
+  <!-- Text Container -->
+  <div class="text-container" id="text-container"></div>
+
+<script>
+  const texts = [
+    "Designed by Apple.",
+    "Think Different.",
+    "Experience Innovation.",
+    "Hello, World.",
+    "The Future is Now."
+  ];
+
+  const container = document.getElementById("text-container");
+  let lineIndex = 0;
+  const typingSpeed = 100;
+
+  function typeLine(line) {
+    document.querySelectorAll('.cursor').forEach(el => el.remove());
+
+    const span = document.createElement("div");
+    span.className = "rainbow-line";
+
+    container.appendChild(span);
+
+    let charIndex = 0;
+
+    function typeChar() {
+      const oldCursor = span.querySelector('.cursor');
+      if (oldCursor) oldCursor.remove();
+
+      span.innerHTML = texts[line].slice(0, charIndex) +
+        '<span class="cursor" style="border-right:2px solid rgba(0,0,0,0.2);">&nbsp;</span>';
+
+      if (charIndex < texts[line].length) {
+        charIndex++;
+        setTimeout(typeChar, typingSpeed);
+      } else {
+        const oldCursor = span.querySelector('.cursor');
+        if (oldCursor) oldCursor.remove();
+        lineIndex++;
+        if (lineIndex < texts.length) {
+          setTimeout(() => typeLine(lineIndex), 800);
+        }
+      }
+    }
+    typeChar();
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => typeLine(lineIndex), 1000);
+  });
+</script>
+</body>
+</html>
